@@ -1,0 +1,6 @@
+.headnavbar{
+    background-color: var(--button-color);
+}
+#basic-nav-dropdown{
+    color: white;
+}

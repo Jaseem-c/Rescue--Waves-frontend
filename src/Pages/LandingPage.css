@@ -1,0 +1,47 @@
+.bg{
+    background-image: url('../assets//hero.jpg');
+    background-size: cover;
+    opacity: 1;
+    filter: brightness(0.8);
+    height: 100vh;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.herotitle {
+    color: white;
+    font-size: 60px; /* Base font size for small screens */
+    
+}
+.heropara{
+    color: white;
+    }
+
+.about,.services,.donation,.volunteer,.contact{
+    background-color: black;
+}
+.footer{
+    background-color: var(--button-color);
+}
+@media (min-width: 576px) {
+    .herotitle {
+        font-size: 80px; /* Medium screens (e.g., tablets) */
+    }
+}
+
+@media (min-width: 768px) {
+    .herotitle {
+        font-size: 100px; /* Large screens (e.g., small laptops) */
+    }
+}
+
+@media (min-width: 992px) {
+    .herotitle {
+        font-size: 120px; /* Extra large screens (e.g., desktops) */
+    }
+}
+
+
+           
+
+

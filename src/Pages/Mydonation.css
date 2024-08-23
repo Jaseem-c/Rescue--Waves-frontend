@@ -1,0 +1,75 @@
+/* Container for the whole page */
+.enhanced-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+}
+
+/* Heading style */
+.enhanced-container h2 {
+    color: #343a40;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Donation card styling */
+.donation-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+/* Card hover effect */
+.donation-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Section heading inside card */
+.donation-card h3 {
+    color: #007bff;
+    font-size: 22px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+}
+
+/* Individual donation item styling */
+.donation-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    font-size: 18px;
+    color: #495057;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Label styling */
+.donation-label {
+    font-weight: 600;
+}
+
+/* Value styling */
+.donation-value {
+    color: #28a745;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+/* Add some margin to separate sections */
+.mt-4 {
+    margin-top: 24px;
+}
+
+/* Additional styling for the container */
+.enhanced-container {
+    padding: 40px;
+}
