@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./ChatBox.css";
-import axios from "axios";
+import  '../Components/Chatbox.css'
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMessage, faPaperPlane, faX } from "@fortawesome/free-solid-svg-icons";
 import { getMessagesApi, sendMessageApi } from "../Services/allApi";
