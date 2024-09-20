@@ -1,16 +1,15 @@
 // ShelterSystem.jsx
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography, IconButton, Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '@mui/material/styles';
+import AddShelter from './AddShelter';
+import { deleteShelterApi, getAllBookingDetailsApi, getAllSheltersApi } from '../../Services/allApi';
+import { addShelterContext } from '../../../Context/ContextShare';
+import Swal from 'sweetalert2';
 
-// Example shelter data
-const shelters = [
-  { id: 1, name: 'Shelter A', location: 'City A', capacity: 100, status: 'Available' },
-  { id: 2, name: 'Shelter B', location: 'City B', capacity: 50, status: 'Full' },
-  // Add more shelter data as needed
-];
+
 
 const shelterBookings = [
   { id: 1, name: 'Shelter A', email: 'user1@example.com', phoneNumber: '123-456-7890', numberOfPeople: 3 },
@@ -34,6 +33,69 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 function ShelterSystem() {
+  // to add shelter automaticaly
+  const {addShelterResponse}=useContext(addShelterContext)
+  // to delete shelter autoamticaly
+  const [shelterDeleteStatus,setShelterDeleteStatus]=useState(false)
+  // to store shelter details
+  const [shelters, setShelters] =useState([]);
+
+  const getShelters=async()=>{
+    const result=await getAllSheltersApi()
+    setShelters(result.data)
+  }
+  console.log(shelters);
+
+ 
+
+  // to delete shelter
+  const handleDelete=async(id)=>{
+    const result=await deleteShelterApi(id)
+
+    if(result.status==200){
+      setShelterDeleteStatus(true)
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Shelter deleted successfully",
+        showConfirmButton: false,
+        timer: 2000
+      });
+      // alert('Shelter deleted successfully')
+    }
+    else{
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Error deleting shelter",
+        showConfirmButton: false,
+        timer: 2000
+      });
+      // alert('Error deleting shelter')
+    }
+  }
+  
+  useEffect(()=>{
+    getShelters()
+    setShelterDeleteStatus(false)
+  },[addShelterResponse,shelterDeleteStatus])
+
+
+  // to store alluserbooking details
+  const [allUserBookings, setAllUserBookings] = useState([]);
+
+  const getAllUserBookingDetails=async()=>{
+    const result=await getAllBookingDetailsApi()
+    setAllUserBookings(result.data)
+  }
+
+  useEffect(()=>{
+    getAllUserBookingDetails()
+  },[])
+  console.log(allUserBookings);
+  
+  
+
   return (
     <div>
       <div className='d-flex'>
@@ -42,9 +104,9 @@ function ShelterSystem() {
           </Typography>
     
           {/* Add Shelter Button */}
-          <Button variant="contained" color="primary" sx={{ mb: 4 }} className='ms-auto'>
-            Add Shelter
-          </Button>
+         <div className='ms-auto'>
+          <AddShelter/>
+         </div>
       </div>
 
       {/* Shelter Details Section */}
@@ -55,30 +117,34 @@ function ShelterSystem() {
         <Table>
           <TableHead>
             <TableRow>
+          
               <StyledTableCell>Shelter Name</StyledTableCell>
               <StyledTableCell>Location</StyledTableCell>
+              <StyledTableCell>Facilities</StyledTableCell>
               <StyledTableCell>Capacity</StyledTableCell>
-              <StyledTableCell>Status</StyledTableCell>
+              <StyledTableCell>Availability</StyledTableCell>
               <StyledTableCell align="center">Actions</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {shelters.map((shelter) => (
-              <StyledTableRow key={shelter.id}>
-                <TableCell>{shelter.name}</TableCell>
-                <TableCell>{shelter.location}</TableCell>
-                <TableCell>{shelter.capacity}</TableCell>
-                <TableCell>{shelter.status}</TableCell>
+            {shelters?shelters.map((shelter) => (
+              <StyledTableRow key={shelter._id}>
+                <TableCell>{shelter?.name}</TableCell>
+                <TableCell>{shelter?.location}</TableCell>
+                <TableCell>{shelter?.facilities}</TableCell>
+                <TableCell>{shelter?.capacity}</TableCell>
+                <TableCell>{shelter?.availability}</TableCell>
+            
                 <TableCell align="center">
                   
                   <Tooltip title="Delete">
-                    <IconButton color="error">
+                    <IconButton color="error" type='button' onClick={()=>handleDelete(shelter?._id)}>
                       <DeleteIcon />
                     </IconButton>
                   </Tooltip>
                 </TableCell>
               </StyledTableRow>
-            ))}
+            )):<p className='text-danger'>No shelters</p>}
           </TableBody>
         </Table>
       </TableContainer>
@@ -91,29 +157,29 @@ function ShelterSystem() {
         <Table>
           <TableHead>
             <TableRow>
+            <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell>Shelter Name</StyledTableCell>
+              <StyledTableCell>Location</StyledTableCell>
               <StyledTableCell>Email</StyledTableCell>
               <StyledTableCell>Phone Number</StyledTableCell>
+              <StyledTableCell>Date</StyledTableCell>
               <StyledTableCell>Number of People</StyledTableCell>
-              <StyledTableCell align="center">Actions</StyledTableCell>
+              <StyledTableCell >Status</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {shelterBookings.map((booking) => (
-              <StyledTableRow key={booking.id}>
-                <TableCell>{booking.name}</TableCell>
-                <TableCell>{booking.email}</TableCell>
-                <TableCell>{booking.phoneNumber}</TableCell>
-                <TableCell>{booking.numberOfPeople}</TableCell>
-                <TableCell align="center">
-                  <Tooltip title="Delete">
-                    <IconButton color="error">
-                      <DeleteIcon />
-                    </IconButton>
-                  </Tooltip>
-                </TableCell>
+            {allUserBookings.length>0?allUserBookings.map((item) => (
+              <StyledTableRow key={item?._id}>
+                <TableCell>{item?.name}</TableCell>
+                <TableCell>{item?.shelterName}</TableCell>
+                <TableCell>{item?.location}</TableCell>
+                <TableCell>{item?.email}</TableCell>
+                <TableCell>{item?.phone}</TableCell>
+                <TableCell>{item?.BookingDate}</TableCell>
+                <TableCell align='center'>{item?.noOfPeople}</TableCell>
+                <TableCell className='text-primary'>{item?.BookingStatus}</TableCell>
               </StyledTableRow>
-            ))}
+            )):<p className='text-danger'>No Bookings</p>}
           </TableBody>
         </Table>
       </TableContainer>

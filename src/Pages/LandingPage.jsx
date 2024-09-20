@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import '../Pages/LandingPage.css'
-import { Button, Card, Col, Row } from 'react-bootstrap'
+import { Button, Card, Col, Nav, Row } from 'react-bootstrap'
 import logo from '../assets/logo.png'
 import about from '../assets/About.jpeg'
 import donation from '../assets/donation.jpg'
@@ -11,18 +11,50 @@ import campaign from '../assets/donation campaign.jpg'
 import volunteer from '../assets/volunteer.jpg'
 import contact from '../assets/Contact.png'
 import { Link } from 'react-router-dom'
+import { Avatar, IconButton, Menu, MenuItem } from '@mui/material'
+import avatar from '../assets/avatar.png'
+
 function LandingPage() {
+   // menu button
+   const [anchorEl, setAnchorEl] = useState(null);
+
+   const handleClick = (event) => {
+       setAnchorEl(event.currentTarget);
+   };
+
+   const handleClose = () => {
+       setAnchorEl(null);
+   };
   return (
     <>
       {/* hero */}
       <div className='bg' style={{ position: 'relative' }}>
         <Row className='w-100' >
-          <div className='container px-5'>
+          <div className='container px-5 d-flex'>
             <nav className="navbar">
               <a className="navbar-brand" href="#">
                 <img src={logo} alt="Bootstrap" width="130" height="130" />
               </a>
             </nav>
+            <Nav className='ms-auto mt-5'>
+                            {/* menu button */}
+                            <div>
+                                <IconButton onClick={handleClick}>
+                                    <Avatar
+                                        src={avatar}
+                                        alt="User Avatar"
+                                    />
+                                </IconButton>
+                                <Menu
+                                    anchorEl={anchorEl}
+                                    open={Boolean(anchorEl)}
+                                    onClose={handleClose}
+                                >
+                                    <MenuItem onClick={handleClose}component={Link} to='/login'>user</MenuItem>
+                                    <MenuItem onClick={handleClose} component={Link} to="/adminlogin">admin</MenuItem>
+                                </Menu>
+                            </div>
+                        </Nav>
           </div>
         </Row>
         <Row className='w-100 mt-5'>

@@ -19,13 +19,28 @@ import CampaignManagement from './Components/CampaignManagement';
 import DonationDetails from './Components/DonationDetails';
 import ShelterSystem from './Components/ShelterSystem';
 import VolunteerManagement from './Components/VolunteerManagement';
+import { Button, Modal } from 'react-bootstrap';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AdminChat from './Components/AdminChat';
 
 export default function Dashboard() {
+  const naviagte=useNavigate('')
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const handleLogout=()=>{
+    setShow(false)
+    naviagte("/")
+
+  }
   return (
     <>
     <div className='bg-primary d-flex py-3 px-5'>
         <h4 className='text-light'>Admin Dashboard</h4>
-        <button className='btn ms-auto text-light bg-dark rounded-5 px-3'><LogoutIcon/>LogOut</button>
+        <button className='btn ms-auto text-light bg-dark rounded-5 px-3' onClick={handleShow}><LogoutIcon/>LogOut</button>
     </div>
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', backgroundColor: '#f5f5f5' }}>
           <Box sx={{ width: '100%', height: '100%', maxWidth: '100%', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', borderRadius: '12px', overflow: 'hidden', backgroundColor: '#ffffff' }}>
@@ -49,7 +64,7 @@ export default function Dashboard() {
                 },
               }}
             >
-              <TabList sx={{ backgroundColor: '#f0f0f0', borderRight: '1px solid #e0e0e0',width:"25%",height:"90vh"}}>
+              <TabList sx={{ backgroundColor: '#f0f0f0', borderRight: '1px solid #e0e0e0',width:"25%",height:"180vh"}}>
                 <Tab><DashboardIcon/>Dashboard</Tab>
                 <Tab><AccountCircleIcon/>User Management</Tab>
                 <Tab><CampaignIcon/>Campaign Management</Tab>
@@ -77,10 +92,28 @@ export default function Dashboard() {
                 <TabPanel value={5}>
                   <VolunteerManagement/>
                 </TabPanel>
+                <TabPanel value={6}>
+                 <AdminChat/>
+                </TabPanel>
               </Box>
             </Tabs>
           </Box>
         </Box>
+
+        <Modal show={show} onHide={handleClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Logout</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to log out?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleLogout}>
+            Logout
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

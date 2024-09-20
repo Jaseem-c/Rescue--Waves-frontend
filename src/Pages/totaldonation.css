@@ -1,0 +1,43 @@
+.thank-you-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.thank-you-card {
+    
+    max-width: 600px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.thank-you-card:hover {
+    transform: translateY(-5px);
+}
+
+.thank-you-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: #4b0082;
+    
+}
+
+.thank-you-message {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.2rem;
+    color: #333333;
+   
+}
+
+.thank-you-amount {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5rem;
+    color: #4b0082;
+   
+}
+
+.thank-you-signature {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.3rem;
+    color: #555555;
+}

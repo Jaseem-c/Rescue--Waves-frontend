@@ -1,78 +1,142 @@
-import { faAngleUp, faMessage, faX } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react'
-import { Collapse } from 'react-bootstrap'
-import '../Components/Chatbox.css'
+import React, { useEffect, useRef, useState } from "react";
+import "./ChatBox.css";
+import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMessage, faPaperPlane, faX } from "@fortawesome/free-solid-svg-icons";
+import { getMessagesApi, sendMessageApi } from "../Services/allApi";
+
 
 function Chatbox() {
-    const [open, setOpen] = useState(false);
+  const [chat, setChat] = useState([]);
+  const [showChatBox, setShowChatBox] = useState(false);
+  const [messages, setMessage] = useState({
+    senderId: "",
+    senderName: "",
+    receiverId: "66d33d2b9134c02ecc65fb7f",
+    message: "",
+  });
 
-    return (
-        <>
+  const [count, setCount] = useState(1);
 
-            {/* Button - fixed at the bottom-right corner */}
-            <div
-                className='bg-success d-flex align-items-center justify-content-center'
-                onClick={() => setOpen(!open)}
-                style={{
-                    position: 'fixed',
-                    bottom: '20px',
-                    right: '20px',
-                    width: '70px',
-                    height: '70px',
-                    borderRadius: '50%',
-                    zIndex: 1000,
-                    cursor: "pointer"
-                }}
-            >
-                {!open ? <FontAwesomeIcon icon={faMessage} className='fa-2x text-light' /> : <FontAwesomeIcon icon={faX} className='fa-2x text-light' />}
-            </div>
+  const AlwaysScrollToBottom = () => {
+    const elementRef = useRef();
+    useEffect(() => elementRef.current.scrollIntoView());
+    return <div ref={elementRef} />;
+  };
+  if (count === 1) {
+    const userString = sessionStorage.getItem("existingUser");
+    const user = JSON.parse(userString);
+    console.log(user);
+    setMessage({
+      ...messages,
+      senderId: user._id,
+      senderName: user.username,
+    });
+    setCount(2);
+  }
 
-            {/* Collapsible chat window - appears above the button */}
-            <Collapse in={open}>
-                <div
-                    id="example-collapse-text"
-                    className='bg-light w-sm-75 w-md-50 w-lg-25 ms-3 ms-md-0 '
-                    style={{
-                        position: 'fixed',
-                        bottom: '100px', // Position the chat window above the button
-                        right: '20px',
-                        zIndex: 999, // Lower z-index to stay behind the button
-                        borderRadius: '10px',
-                        border: "1px solid green",
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                    }}
-                >
-                    <div style={{ color: 'black', }}>
-                        <h5 className='mt-3 text-center'>Chat Window</h5>
-                        <div className="card-body p-3" style={{ flex: 1, overflowY: 'auto' }}>
-                            {/* Chat Messages */}
-                            <div className="chat-message">
-                                <div className="admin-message mb-2">
-                                    <div className="bg-primary text-white p-2 rounded d-inline-block">
-                                        <strong>Admin:</strong> Hello! How can I assist you today?
-                                    </div>
-                                </div>
-                                <div className="user-message text-right mb-2 ">
-                                    <div className="bg-secondary text-white p-2 rounded d-inline-block" style={{ right: 0 }}>
-                                        Hi, I need help with my order.
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="card-footer bg-white my-4">
-                                <div className="input-group">
-                                    <input type="text" className="form-control" placeholder="Type a message..." />
-                                    <div className="input-group-append">
-                                        <button className="btn btn-primary" type="button">Send</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+  useEffect(() => {
+    viewMessage();
+  }, []);
+
+  const viewMessage = async () => {
+    try {
+      const senderId=messages?.senderId
+      const recievrId='66d33d2b9134c02ecc65fb7f'
+      const response = await getMessagesApi(senderId,recievrId)
+      setChat(response.data);
+    } catch (error) {}
+  };
+
+  const sentMessage = async () => {
+    try {
+      const response = await sendMessageApi(messages)
+      if (response.status >= 200 && response.status <= 300) {
+        viewMessage();
+        setMessage({
+          ...messages,
+          message: "",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <div>
+      <span
+        className={`message_icon ${
+          showChatBox ? "d-none" : ""
+        } position-fixed bottom-0 end-0 mb-3 me-3`}
+        onClick={() => setShowChatBox(true)}
+      >
+        <FontAwesomeIcon icon={faMessage} />
+      </span>
+      <div
+        className={`chat_box ${
+          showChatBox ? "show" : ""
+        } position-fixed bottom-0 end-0`}
+      >
+        <div className="chat_header position-relative ">
+          <p className="text-center text-white poppins-semibold">
+            Chat with Admin
+          </p>
+          <span
+            className="position-absolute end-0 top-0 text-white close_btn mt-2 me-3"
+            onClick={() => setShowChatBox(false)}
+          >
+            <FontAwesomeIcon icon={faX} />
+          </span>
+        </div>
+        <div className="chat_body poppins-regular">
+          {chat.length >= 0 ? (
+            chat.map((i) => (
+              <>
+                {i?.senderId !== messages.senderId ? (
+                  <>
+                    <div className="admin_chat">
+                      <p>
+                        <div className="admin_title">Admin</div>
+                        {i?.message}
+                      </p>
                     </div>
-                </div>
-            </Collapse>
-        </>
-    )
+                  </>
+                ) : (
+                  <>
+                    <div className="user_chat">
+                      <p>{i?.message}</p>
+                    </div>
+                  </>
+                )}
+              </>
+            ))
+          ) : (
+            <h6>You didn't got any messages</h6>
+          )}
+
+          <AlwaysScrollToBottom />
+        </div>
+        <div className="chat_input">
+          <input
+            type="text"
+            placeholder="Message"
+            value={messages.message}
+            onChange={(e) =>
+              setMessage({
+                ...messages,
+                message: e.target.value,
+              })
+            }
+          />
+          <div className="sent_icon">
+          <FontAwesomeIcon icon={faPaperPlane} onClick={() => sentMessage()} />
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default Chatbox
+export default Chatbox;

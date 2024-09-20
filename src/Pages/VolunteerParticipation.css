@@ -47,16 +47,9 @@
     margin-bottom: 10px;
 }
 
-/* Status color */
-.status.completed {
-    color: #28a745;
-    font-weight: 700;
-}
 
-.status.upcoming {
-    color: #ffc107;
-    font-weight: 700;
-}
+
+
 
 /* Responsive Design Adjustments */
 @media (max-width: 768px) {

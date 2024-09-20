@@ -1,17 +1,17 @@
 // CampaignManagement.jsx
-import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, IconButton, Tooltip, Button } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import React, {  useContext, useEffect, useState } from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, IconButton, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
 import { styled } from '@mui/material/styles';
 
-// Example campaign data
-const campaignData = [
-  { id: 1, name: 'Flood Relief', date: '2024-01-15', time: '10:00 AM', location: 'Main Street', district: 'Central', state: 'New York', contact: '123-456-7890' },
-  { id: 2, name: 'Medical Supplies', date: '2024-03-01', time: '02:00 PM', location: 'Health Center', district: 'West', state: 'California', contact: '987-654-3210' },
-  // Add more campaign data as needed
-];
+import AddCampaign from './AddCampaign';
+import { deleteCampaignApi, getAllCampaign } from '../../Services/allApi';
+
+import { addResponseContext } from '../../../Context/ContextShare';
+import Swal from 'sweetalert2';
+
+
+
 
 // Styled components
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -28,56 +28,111 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+
+
 function CampaignManagement() {
+  // to store campaign details
+  const [allcampaignDetails, setAllCampaignDetails] = useState([])
+
+ 
+// to add automaticaly
+const {addCampaignResponse}=useContext(addResponseContext)
+
+// to delete automaticaly
+  const[autoDelete,setAutoDelete]=useState(false)
+
+  // to delete campaigns
+  const handleDelete = async(id) => {
+    const  result=await deleteCampaignApi(id)
+    if(result.status==200){
+
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Campaign deleted successfully",
+        showConfirmButton: false,
+        timer: 1500
+      });
+  
+      // alert("Campaign deleted successfully")
+      setAutoDelete(true)
+      
+    }
+    else{
+      Swal.fire({
+        position: "top-end",
+        icon: "error",
+        title: "Failed to delete campaign",
+        showConfirmButton: false,
+        timer: 2000
+      });
+      // alert("Failed to delete campaign")
+    }
+  }
+
+  // to get campaign
+  const getCampaignDetails=async()=>{
+    const result=await getAllCampaign()
+    setAllCampaignDetails(result.data) 
+  }
+ 
+  useEffect(()=>{
+    getCampaignDetails()
+    },[addCampaignResponse,autoDelete])
+
   return (
-    <div>
-      <div className='d-flex'>
-          <Typography variant="h4" gutterBottom sx={{ mb: 2, fontWeight: 'bold', color: 'text.primary' }}>
-            Campaign Management
-          </Typography>
-          <Button variant="contained" color="primary" startIcon={<AddIcon />} sx={{ mb: 2 }} className='ms-auto'>
-            Add Campaign
-          </Button>
+    <>
+      <div>
+        <div className='d-flex'>
+            <Typography variant="h4" gutterBottom sx={{ mb: 2, fontWeight: 'bold', color: 'text.primary' }}>
+              Campaign Management
+            </Typography>
+            <div className='ms-auto'>
+            <AddCampaign/>
+            </div>
+        </div>
+        <TableContainer component={Paper} sx={{ boxShadow: 3 }} className='mt-5 shadow'>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Campaign Title</StyledTableCell>
+                <StyledTableCell>Description</StyledTableCell>
+                <StyledTableCell>Date</StyledTableCell>
+                <StyledTableCell>Time</StyledTableCell>
+                <StyledTableCell>Location</StyledTableCell>
+                <StyledTableCell>Contact</StyledTableCell>
+             
+                
+                <StyledTableCell align="center">Actions</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {allcampaignDetails?allcampaignDetails?.map((campaign) => (
+                <StyledTableRow key={campaign._id}>
+                  <TableCell>{campaign?.title}</TableCell>
+                  <TableCell>{campaign?.description}</TableCell>
+                  <TableCell>{campaign?.date}</TableCell>
+                  <TableCell>{campaign?.time}</TableCell>
+                  <TableCell>{campaign?.dropoffLocation.join(',')}</TableCell>
+                  <TableCell>{campaign?.contact}</TableCell>
+             
+                  <TableCell align="center">
+                    <Tooltip title="Delete">
+                      <IconButton color="error" type='button' onClick={()=>handleDelete(campaign?._id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </StyledTableRow>
+              )):<p className='text-danger'>no campaigns</p>}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
-      <TableContainer component={Paper} sx={{ boxShadow: 3 }} className='mt-5 shadow'>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Campaign Name</StyledTableCell>
-              <StyledTableCell>Date</StyledTableCell>
-              <StyledTableCell>Time</StyledTableCell>
-              <StyledTableCell>Location</StyledTableCell>
-              <StyledTableCell>District</StyledTableCell>
-              <StyledTableCell>State</StyledTableCell>
-              <StyledTableCell>Contact</StyledTableCell>
-              <StyledTableCell align="center">Actions</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {campaignData.map((campaign) => (
-              <StyledTableRow key={campaign.id}>
-                <TableCell>{campaign.name}</TableCell>
-                <TableCell>{campaign.date}</TableCell>
-                <TableCell>{campaign.time}</TableCell>
-                <TableCell>{campaign.location}</TableCell>
-                <TableCell>{campaign.district}</TableCell>
-                <TableCell>{campaign.state}</TableCell>
-                <TableCell>{campaign.contact}</TableCell>
-                <TableCell align="center">
-                  <Tooltip title="Delete">
-                    <IconButton color="error">
-                      <DeleteIcon />
-                    </IconButton>
-                  </Tooltip>
-                </TableCell>
-              </StyledTableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    
-    
-    </div>
+      
+   
+      
+    </>
   );
 }
 

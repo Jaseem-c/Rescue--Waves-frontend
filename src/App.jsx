@@ -15,6 +15,8 @@ import VolunteerParticipation from './Pages/VolunteerParticipation'
 import Profile from './Pages/Profile'
 import Chatbox from './Components/Chatbox'
 import Dashboard from './Admin/Dashboard'
+import Adminlogin from './Admin/Adminlogin'
+import Payment from './Components/Payment'
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
         <Route path='/profile' element={<Profile />}/>
         <Route path="*" element={<PageNotFound/>} />
         <Route path="/chat" element={<Chatbox/>} />
+        <Route path="/adminlogin" element={<Adminlogin/>} />
+        <Route path="/payment" element={<Payment/>} />
         <Route path="/admindashboard" element={<Dashboard/>} />
       </Routes>
     </>

@@ -1,9 +1,43 @@
-import { useTheme } from '@emotion/react';
+
 import { BarChart } from '@mui/x-charts/BarChart';
-import React from 'react'
+import React,{useEffect, useState} from 'react'
 import { Col, Row, Table } from 'react-bootstrap'
+import { getAllBookingDetailsApi, getAllCampaign, getAllSheltersApi, getAllUsersApi } from '../../Services/allApi';
 
 function Homedashboard() {
+
+    const [numberOfUsers,setNumberOfUsers]= useState([])
+    const [numberOfShelters,setNumberOfShelters]=useState([])
+    const [numberOfCampaigns,setNumberOfCampaigns]=useState([])
+    const [dashBookingDetails,setDashBookingDetails]=useState([])
+
+
+    const getnumberofUsers=async()=>{
+        const result=await getAllUsersApi()
+        setNumberOfUsers(result.data)
+    }
+    const getnumberofshelters=async()=>{
+        const result=await getAllSheltersApi()
+        setNumberOfShelters(result.data)
+    }
+    const numberofcampaigns=async()=>{
+        const result=await getAllCampaign()
+        setNumberOfCampaigns(result.data)
+    }
+    const dashbookingdetails=async()=>{
+        const result=await getAllBookingDetailsApi()
+        setDashBookingDetails(result.data)
+    }
+    console.log(dashBookingDetails);
+    
+
+    useEffect(()=>{
+        getnumberofUsers()
+        getnumberofshelters()
+        numberofcampaigns()
+        dashbookingdetails()
+    },[])
+
 
     return (
         <>
@@ -12,19 +46,19 @@ function Homedashboard() {
                 <Row className='w-100 mt-5'>
                     <Col xs={12} md={4} lg={4}>
                         <div className='bg-primary d-flex align-items-center justify-content-center flex-column rounded text-white p-3'>
-                            <h3 className='mb-1'>35</h3>
+                            <h3 className='mb-1'>{numberOfUsers.length}</h3>
                             <h6 className='mb-0'>users</h6>
                         </div>
 
                     </Col>
                     <Col xs={12} md={4} lg={4}>
                         <div className='bg-primary d-flex align-items-center justify-content-center flex-column rounded text-white p-3'>
-                            <h3 className='mb-1'>18</h3>
+                            <h3 className='mb-1'>{numberOfShelters.length}</h3>
                             <h6 className='mb-0'>Shelters</h6>
                         </div></Col>
                     <Col xs={12} md={4} lg={4}>
                         <div className='bg-primary d-flex align-items-center justify-content-center flex-column rounded text-white p-3'>
-                            <h3 className='mb-1'>7</h3>
+                            <h3 className='mb-1'>{numberOfCampaigns.length}</h3>
                             <h6 className='mb-0'>Campaign</h6>
                         </div></Col>
                 </Row>
@@ -56,50 +90,17 @@ function Homedashboard() {
                         <tr>
                             <th>Name</th>
                             <th>Shelter Name</th>
-                            <th>NO.of Peoples</th>
+                            <th>Peoples(Nos)</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Neel</td>
-                            <td>Mes College</td>
-                            <td>4</td>
+                        {dashBookingDetails.length>0?dashBookingDetails.map((bookings)=>(
+                            <tr>
+                            <td>{bookings?.name}</td>
+                            <td>{bookings?.shelterName}</td>
+                            <td>{bookings?.noOfPeople}</td>
                         </tr>
-                        <tr>
-                            <td>Neel</td>
-                            <td>Mes College</td>
-                            <td>4</td>
-                        </tr>
-                        <tr>
-                            <td>Neel</td>
-                            <td>Mes College</td>
-                            <td>4</td>
-                        </tr>
-                        <tr>
-                            <td>Neel</td>
-                            <td>Mes College</td>
-                            <td>4</td>
-                        </tr>
-                        <tr>
-                            <td>Neel</td>
-                            <td>Mes College</td>
-                            <td>4</td>
-                        </tr>
-                        <tr>
-                            <td>Food</td>
-                            <td>15</td>
-                            <td>25</td>
-                        </tr>
-                        <tr>
-                            <td>Cloth</td>
-                            <td>20</td>
-                            <td>30</td>
-                        </tr>
-                        <tr>
-                            <td>Money</td>
-                            <td>10</td>
-                            <td>20</td>
-                        </tr>
+                        )):<p>No Bookings</p>}
                     </tbody>
                 </Table>
             </div>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../Components/Header'
 import Footer from '../Components/Footer'
 import { Col, Row } from 'react-bootstrap'
@@ -13,7 +13,33 @@ import emergencyimg from '../assets/Emergency-Call-color-800px.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPhone } from '@fortawesome/free-solid-svg-icons'
 import Chatbox from '../Components/Chatbox'
+import { getHomeCampaignApi, getHomeProgramsApi } from '../Services/allApi'
 function Home() {
+
+  // to store homeprogramsdetails
+  const [homePrograms, setHomePrograms] = useState([])
+
+  const [homeCampaigns,setHomeCampaigns]=useState([])
+  // to get home campaigns
+  const getHomeCampaigns=async()=>{
+    const result= await getHomeCampaignApi()
+    setHomeCampaigns(result.data)
+  }
+
+  // console.log(homeCampaigns);
+
+  const getHomePrograms=async()=>{
+    const result=await getHomeProgramsApi()
+    setHomePrograms(result.data)
+  }
+  
+  console.log(homePrograms);
+  
+
+  useEffect(()=>{
+getHomeCampaigns()
+getHomePrograms()
+  },[])
   return (
     <>
       <Header  />
@@ -47,15 +73,11 @@ function Home() {
         <div className="my-5">
           <h1 className=' my-5  text-dark'>Volunteer Opportunities</h1>
           <Row className='w-100 mt-5 d-flex align-items-center justify-content-center'>
+           {homePrograms.length>0?homePrograms.map((item)=>(
             <Col xs={12} md={6} lg={4} className='mt-3 mt-md-0 d-flex align-items-center justify-content-center' >
-              <VolunteerCrad />
+              <VolunteerCrad program={item}/>
             </Col>
-            <Col xs={12} md={6} lg={4} className='mt-3 mt-md-0 d-flex align-items-center justify-content-center' >
-              <VolunteerCrad />
-            </Col>
-            <Col xs={12} md={6} lg={4} className='mt-3 mt-md-0 d-flex align-items-center justify-content-center' >
-              <VolunteerCrad />
-            </Col>
+           )) :<p>No programs</p>}
           </Row>
           <div className="my-5">
             <Link to={'/volunteerlist'} style={{ color: "var(--button-color)" }}> <p className='text-center fs-4' style={{ textDecoration: "none" }}>See More</p></Link>
@@ -65,12 +87,9 @@ function Home() {
         <div className="campaign mt-5" id='campaign'>
           <h1 className='text-dark my-5'>Active Campaigns</h1>
           <Row className='w-100 mt-5 d-flex align-items-center justify-content-center'>
-            <Col xs={12} md={6} lg={6} className='mt-3 mt-md-0 d-flex align-items-center justify-content-center' >
-              <CampaignCard />
-            </Col>
-            <Col xs={12} md={6} lg={6} className='mt-3 mt-md-0 d-flex align-items-center justify-content-center' >
-              <CampaignCard />
-            </Col>
+            {homeCampaigns.length>0?homeCampaigns.map((item)=>(<Col xs={12} md={6} lg={6} className='mt-3 mt-md-0 d-flex align-items-center justify-content-center' >
+              <CampaignCard campaign={item} />
+            </Col>)):null}
           </Row>
           <div className="my-5">
             <Link to={'/donationcampaigns'} style={{ color: "var(--button-color)" }}> <p className='text-center fs-4' style={{ textDecoration: "none" }}>See More</p></Link>
