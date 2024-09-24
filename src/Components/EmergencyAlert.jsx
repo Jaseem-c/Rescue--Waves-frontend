@@ -27,7 +27,7 @@ function EmergencyAlert() {
       // Fetch weather data
       const weatherResponse = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
         params: {
-          q: "kochi", // Replace with dynamic location if needed
+          q: "kakkanad", // Replace with dynamic location if needed
           appid: '658cb1112b27dbb1c69daf1a1e5ea151'
         }
       });

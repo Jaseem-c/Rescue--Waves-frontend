@@ -1,12 +1,29 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Card, Col, Row } from 'react-bootstrap'
 import cloth from '../assets/cloth.jpg'
 import { serverUrl } from '../Services/serverUrl'
 function CampaignCard({ campaign }) {
+    // campare dates to active or deactive programs
+    const [available, setAvailable] = useState(true)
+    const today=new Date().toLocaleDateString('en-CA')
+  
+    const checkDate=()=>{
+      console.log(today);
+      if(today>campaign?.date)
+      {
+        setAvailable(false)
+  
+        
+      }
+    }
+
+    useEffect(()=>{
+      checkDate()
+    },[])
   return (
     <>
 
-      <Card style={{ width: '100%', height: "650px" }} className='rounded-3 p-3 shadow'>
+      <Card style={{ width: '100%', height: "650px" ,pointerEvents: available ? 'auto' : 'none',opacity: available ? 1 : 0.5 }} className='rounded-3 p-3 shadow '>
         <Card.Img
           variant="top"
           src={`${serverUrl}/uploads/${campaign?.image}`}
